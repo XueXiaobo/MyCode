@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:tag="testMain"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/shipei"
+        android:layout_width="170dp"
+        android:layout_height="100dp"
+        android:background="@android:color/black"
+        android:tag="shipei" >
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@android:color/holo_red_dark" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</RelativeLayout>
