@@ -1,5 +1,8 @@
 package com.xc.lib.layout;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
@@ -9,6 +12,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+
+import com.xc.lib.annotation.Resize;
+import com.xc.lib.utils.SysDeug;
 
 public class LayoutUtils {
 	/**
@@ -49,6 +55,54 @@ public class LayoutUtils {
 		// 适配padding
 		v.setPadding(getRate4density(v.getPaddingLeft()), getRate4density(v.getPaddingTop()), getRate4density(v.getPaddingRight()), getRate4density(v.getPaddingBottom()));
 
+	}
+
+	/**
+	 * 通过注解让view比例化,如果使用xutil  一定要在xutil方法后使用
+	 * 
+	 * @param obj
+	 */
+	public static void reSize(Context context, Object obj) {
+		Field[] fields = obj.getClass().getDeclaredFields();
+		if (fields != null) {
+			int len = fields.length;
+			for (int i = 0; i < len; i++) {
+				Field field = fields[i];
+				Class<?> fieldType = field.getType();
+				if (
+				/* 不注入静态字段 */Modifier.isStatic(field.getModifiers()) ||
+				/* 不注入final字段 */Modifier.isFinal(field.getModifiers()) ||
+				/* 不注入基本类型字段 */fieldType.isPrimitive() ||
+				/* 不注入数组类型字段 */fieldType.isArray()) {
+					continue;
+				}
+				reSize(field, obj, context);
+			}
+		}
+	}
+
+	private static void reSize(Field field, Object handler, Context context) {
+		Resize resize = field.getAnnotation(Resize.class);
+		if (resize != null && resize.enable()) {
+			try {
+				field.setAccessible(true);
+				Object obj = field.get(handler);
+				if (obj != null) {
+					if (View.class.isAssignableFrom(obj.getClass())) {
+						// 如果是view的子类才能进行
+						LayoutUtils.rateScale(context, (View) obj, false);
+						SysDeug.logI("成功适配view field:" + field.getName());
+					} else {
+						SysDeug.logI("该注解只能用于view变量 field:" + field.getName());
+					}
+				} else {
+					SysDeug.logI("该注解指向一个null对象 field:" + field.getName());
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**

@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:id="@+id/shipei"
-        android:layout_width="170dp"
+        android:layout_width="180dp"
         android:layout_height="100dp"
         android:background="@android:color/black"
         android:tag="shipei" >

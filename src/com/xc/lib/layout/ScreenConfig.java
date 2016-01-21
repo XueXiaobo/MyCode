@@ -15,6 +15,8 @@ import android.view.ViewTreeObserver;
  *
  */
 public class ScreenConfig {
+	
+	public static boolean isDebug = true;
 	/**
 	 * 宽度与1280*720比列
 	 */
