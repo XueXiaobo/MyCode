@@ -1,7 +1,6 @@
 package com.xc.lib.layout;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -15,7 +14,13 @@ import android.widget.TextView;
 
 import com.xc.lib.annotation.Resize;
 import com.xc.lib.utils.SysDeug;
-
+/**
+ * 
+ * @author xxb
+ * @version 1.0
+ * @see 创建时间：2016年1月21日 上午8:57:43
+ *
+ */
 public class LayoutUtils {
 	/**
 	 * 对view进行比例化，达到适配多种屏幕
@@ -58,25 +63,25 @@ public class LayoutUtils {
 	}
 
 	/**
-	 * 通过注解让view比例化,如果使用xutil  一定要在xutil方法后使用
+	 * 通过注解让view比例化,一定要在view初始化完了后才使用，不然无效果
 	 * 
+	 * @param context
+	 *            上下文
 	 * @param obj
+	 *            需要比例化view的持有者
 	 */
-	public static void reSize(Context context, Object obj) {
-		Field[] fields = obj.getClass().getDeclaredFields();
+	public static void reSize(Context context, Object viewholder) {
+		Field[] fields = viewholder.getClass().getDeclaredFields();
 		if (fields != null) {
 			int len = fields.length;
 			for (int i = 0; i < len; i++) {
 				Field field = fields[i];
 				Class<?> fieldType = field.getType();
-				if (
-				/* 不注入静态字段 */Modifier.isStatic(field.getModifiers()) ||
-				/* 不注入final字段 */Modifier.isFinal(field.getModifiers()) ||
-				/* 不注入基本类型字段 */fieldType.isPrimitive() ||
-				/* 不注入数组类型字段 */fieldType.isArray()) {
+				if (/* 过滤基本类型 */fieldType.isPrimitive() ||
+				/* 过滤数组 */fieldType.isArray()) {
 					continue;
 				}
-				reSize(field, obj, context);
+				reSize(field, viewholder, context);
 			}
 		}
 	}
@@ -91,6 +96,16 @@ public class LayoutUtils {
 					if (View.class.isAssignableFrom(obj.getClass())) {
 						// 如果是view的子类才能进行
 						LayoutUtils.rateScale(context, (View) obj, false);
+						// 如果使用文字适配并且是继承至TextView
+						if (resize.textEnable() && TextView.class.isAssignableFrom(obj.getClass())) {
+							int textSize = resize.textSize();
+							SysDeug.logI("字体适配 field:" + field.getName() + " size : " + textSize);
+							if (textSize != -1) {
+								LayoutUtils.setTextSize((TextView) obj, textSize);
+							} else {
+								LayoutUtils.setTextSizeForSp((TextView) obj);
+							}
+						}
 						SysDeug.logI("成功适配view field:" + field.getName());
 					} else {
 						SysDeug.logI("该注解只能用于view变量 field:" + field.getName());
@@ -165,7 +180,18 @@ public class LayoutUtils {
 		return (int) (value * ScreenConfig.ABS_RATEH + 0.5f);
 	}
 
+	/**
+	 * 字体根据比例适配字体大小 px
+	 */
 	public static void setTextSize(TextView tv, float value) {
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, getRate4px(value));
+	}
+
+	/**
+	 * 根据目标密度来缩放
+	 * 字体根据比例适配字体大小sp valule = (int)(16*ScreenConfig.SCALEDENSITY+0.5f) -> 算法可以了
+	 */
+	public static void setTextSizeForSp(TextView tv) {
+		setTextSize(tv, (ScreenConfig.initScaleDENSITY * tv.getTextSize()) / ScreenConfig.SCALEDENSITY);
 	}
 }

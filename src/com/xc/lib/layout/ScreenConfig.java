@@ -9,13 +9,15 @@ import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
 /**
- * 默认目标机器  1280*720 密度 2.0f   mi 2s    galaxy nexus
+ * 默认目标机器 1280*720 密度 2.0f mi 2s galaxy nexus
+ * 
  * @author 62568_000
- *
+ * 
  */
 public class ScreenConfig {
-	
+
 	public static boolean isDebug = true;
 	/**
 	 * 宽度与1280*720比列
@@ -48,23 +50,28 @@ public class ScreenConfig {
 	 * 
 	 */
 	public static float DENSITY;
+	public static float SCALEDENSITY;
 
 	private static float RATIOWIDTH = 720;
 
 	private static float RATIONHEIGHT = 1280;
 
 	private static float initDENSITY = 2.0f; // 默认2.0
+	public static float initScaleDENSITY = 1.72f; // 默认2.0
 
-	public static void setRatioDensity(float density) {
+	public static void setRatioDensity(float density, float scaleDensity) {
 		initDENSITY = density;
+		initScaleDENSITY = scaleDensity;
 	}
 
 	public static void setRatioScreen(int width, int height) {
 		RATIOWIDTH = width;
 		RATIONHEIGHT = height;
 	}
+
 	/**
 	 * 初始化屏幕数据
+	 * 
 	 * @param context
 	 */
 	public static void init(Context context) {
@@ -74,6 +81,7 @@ public class ScreenConfig {
 			SCRREN_W = dm.widthPixels;
 			SCRREN_H = dm.heightPixels;
 			DENSITY = dm.density;
+			SCALEDENSITY = dm.scaledDensity;
 			ABS_RATEW = SCRREN_W / RATIOWIDTH;
 			ABS_RATEH = SCRREN_H / RATIONHEIGHT;
 			RATE_W = (SCRREN_W * initDENSITY) / (RATIOWIDTH * DENSITY);

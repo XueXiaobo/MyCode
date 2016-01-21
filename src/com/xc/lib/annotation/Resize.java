@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 注解使用缩放
  * @author xxb
  * @version v1.0 创建时间：2016年1月21日 上午8:57:43
  */
@@ -14,12 +15,26 @@ import java.lang.annotation.Target;
 public @interface Resize {
 	/**
 	 * 是否可以使用
-	 * @return
+	 * 
 	 */
 	boolean enable() default true;
+
 	/**
 	 * 是否是以最小化缩放
-	 * @return
+	 * 
 	 */
 	boolean isMin() default true;
+
+	/**
+	 * 是否使用字体适配
+	 * 
+	 */
+	boolean textEnable() default false;
+
+	/**
+	 * 适配字体的大小  px值
+	 * 
+	 */
+	int textSize() default -1;
+
 }
