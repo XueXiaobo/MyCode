@@ -15,7 +15,7 @@ public class TestActivity extends BaseActivity implements OnClickListener {
 	@Resize(id = R.id.shipei)
 	private View shipei;
 
-	@Resize(textSize = 32, id = R.id.test, onClick = true)
+	@Resize(id = R.id.test, onClick = true)
 	TextView tv;
 
 	@Override

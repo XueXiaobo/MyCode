@@ -101,8 +101,8 @@ public class LayoutUtils {
 						// 如果根据id 找到了相应的对象，则赋值
 						View view = ((Activity) context).findViewById(resize.id());
 						if (view != null) {
-							if(handler instanceof View.OnClickListener){
-								view.setOnClickListener((View.OnClickListener)handler);
+							if (handler instanceof View.OnClickListener) {
+								view.setOnClickListener((View.OnClickListener) handler);
 							}
 							field.set(handler, view);
 							reSizeForObj(context, view, resize, field);
@@ -118,6 +118,7 @@ public class LayoutUtils {
 			}
 		}
 	}
+
 	/**
 	 * 
 	 * @param context
@@ -129,7 +130,7 @@ public class LayoutUtils {
 		if (View.class.isAssignableFrom(obj.getClass())) {
 			// 如果是view的子类才能进行
 			if (resize.enable()) {
-				LayoutUtils.rateScale(context, (View) obj, false);
+				LayoutUtils.rateScale(context, (View) obj, resize.isMin());
 				SysDeug.logI("成功适配view field:" + field.getName());
 			}
 			// 如果使用文字适配并且是继承至TextView
