@@ -5,7 +5,7 @@ import android.util.Log;
 import com.xc.lib.layout.ScreenConfig;
 
 public class SysDeug {
-	public static final String TAG = "xxb";
+	public static final String TAG = "xxb_resize";
 	public static final boolean debug = ScreenConfig.isDebug;
 
 	public static void logD(String tag, String msg) {

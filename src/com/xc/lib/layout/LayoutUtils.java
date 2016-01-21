@@ -2,6 +2,7 @@ package com.xc.lib.layout;
 
 import java.lang.reflect.Field;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
@@ -14,12 +15,13 @@ import android.widget.TextView;
 
 import com.xc.lib.annotation.Resize;
 import com.xc.lib.utils.SysDeug;
+
 /**
  * 
  * @author xxb
  * @version 1.0
  * @see 创建时间：2016年1月21日 上午8:57:43
- *
+ * 
  */
 public class LayoutUtils {
 	/**
@@ -63,7 +65,7 @@ public class LayoutUtils {
 	}
 
 	/**
-	 * 通过注解让view比例化,一定要在view初始化完了后才使用，不然无效果
+	 * 通过注解让view比例化
 	 * 
 	 * @param context
 	 *            上下文
@@ -88,35 +90,61 @@ public class LayoutUtils {
 
 	private static void reSize(Field field, Object handler, Context context) {
 		Resize resize = field.getAnnotation(Resize.class);
-		if (resize != null && resize.enable()) {
+		if (resize != null) {
 			try {
 				field.setAccessible(true);
 				Object obj = field.get(handler);
 				if (obj != null) {
-					if (View.class.isAssignableFrom(obj.getClass())) {
-						// 如果是view的子类才能进行
-						LayoutUtils.rateScale(context, (View) obj, false);
-						// 如果使用文字适配并且是继承至TextView
-						if (resize.textEnable() && TextView.class.isAssignableFrom(obj.getClass())) {
-							int textSize = resize.textSize();
-							SysDeug.logI("字体适配 field:" + field.getName() + " size : " + textSize);
-							if (textSize != -1) {
-								LayoutUtils.setTextSize((TextView) obj, textSize);
-							} else {
-								LayoutUtils.setTextSizeForSp((TextView) obj);
+					reSizeForObj(context, obj, resize, field);
+				} else {// 如果当前字段为null ,则检查是否需要赋值
+					if (resize.idEnable() && resize.id() != -1 && (context instanceof Activity)) {
+						// 如果根据id 找到了相应的对象，则赋值
+						View view = ((Activity) context).findViewById(resize.id());
+						if (view != null) {
+							if(handler instanceof View.OnClickListener){
+								view.setOnClickListener((View.OnClickListener)handler);
 							}
+							field.set(handler, view);
+							reSizeForObj(context, view, resize, field);
+						} else {
+							SysDeug.logI("field:" + field.getName() + "未找到 view");
 						}
-						SysDeug.logI("成功适配view field:" + field.getName());
-					} else {
-						SysDeug.logI("该注解只能用于view变量 field:" + field.getName());
 					}
-				} else {
 					SysDeug.logI("该注解指向一个null对象 field:" + field.getName());
 				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	/**
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param resize
+	 * @param field
+	 */
+	private static void reSizeForObj(Context context, Object obj, Resize resize, Field field) {
+		if (View.class.isAssignableFrom(obj.getClass())) {
+			// 如果是view的子类才能进行
+			if (resize.enable()) {
+				LayoutUtils.rateScale(context, (View) obj, false);
+				SysDeug.logI("成功适配view field:" + field.getName());
+			}
+			// 如果使用文字适配并且是继承至TextView
+			if (resize.textEnable() && TextView.class.isAssignableFrom(obj.getClass())) {
+				int textSize = resize.textSize();
+				SysDeug.logI("字体适配 field:" + field.getName() + " size : " + textSize);
+				if (textSize != -1) {
+					LayoutUtils.setTextSize((TextView) obj, textSize);
+				} else {
+					LayoutUtils.setTextSizeForSp((TextView) obj);
+				}
+			}
+
+		} else {
+			SysDeug.logI("该注解只能用于view变量 field:" + field.getName());
 		}
 	}
 
@@ -188,8 +216,8 @@ public class LayoutUtils {
 	}
 
 	/**
-	 * 根据目标密度来缩放
-	 * 字体根据比例适配字体大小sp valule = (int)(16*ScreenConfig.SCALEDENSITY+0.5f) -> 算法可以了
+	 * 根据目标密度来缩放 字体根据比例适配字体大小sp valule =
+	 * (int)(16*ScreenConfig.SCALEDENSITY+0.5f) -> 算法可以了
 	 */
 	public static void setTextSizeForSp(TextView tv) {
 		setTextSize(tv, (ScreenConfig.initScaleDENSITY * tv.getTextSize()) / ScreenConfig.SCALEDENSITY);
