@@ -8,9 +8,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.xc.lib.annotation.Resize;
@@ -31,6 +28,57 @@ public class LayoutUtils {
 	 * @param v
 	 */
 	public static void rateScale(Context context, View v, boolean isMin) {
+		rateScale(context, v, isMin, false);
+		// if (v == null)
+		// return;
+		// if (!ScreenConfig.INIT)
+		// ScreenConfig.init(context);
+		// if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+		// // 适配宽高，和margin
+		// ViewGroup.MarginLayoutParams params = (MarginLayoutParams)
+		// v.getLayoutParams();
+		// params.width = params.width <= 0 ? params.width :
+		// getRate4density(params.width);
+		// if (!isMin) {
+		// params.height = params.height <= 0 ? params.height : (int)
+		// (params.height * ScreenConfig.RATE_H + 0.5f) -
+		// ScreenConfig.STATUSBARHEIGHT / 2;
+		// } else {
+		// params.height = params.height <= 0 ? params.height :
+		// getRate4density(params.height);
+		// }
+		// params.leftMargin = params.leftMargin == 0 ? params.leftMargin :
+		// getRate4density(params.leftMargin);
+		// params.rightMargin = params.rightMargin == 0 ? params.rightMargin :
+		// getRate4density(params.rightMargin);
+		// params.topMargin = params.topMargin == 0 ? params.topMargin :
+		// getRate4density(params.topMargin);
+		// params.bottomMargin = params.bottomMargin == 0 ? params.bottomMargin
+		// : getRate4density(params.bottomMargin);
+		// v.setLayoutParams(params);
+		//
+		// } else { // 其他父控件只能适配宽高，
+		// ViewGroup.LayoutParams params = v.getLayoutParams();
+		// params.width = params.width <= 0 ? params.width :
+		// getRate4density(params.width);
+		// if (!isMin) {
+		// params.height = params.height <= 0 ? params.height : (int)
+		// (params.height * ScreenConfig.RATE_H + 0.5f) -
+		// ScreenConfig.STATUSBARHEIGHT / 2;
+		// } else {
+		// params.height = params.height <= 0 ? params.height :
+		// getRate4density(params.height);
+		// }
+		// }
+		// // 适配padding
+		// v.setPadding(getRate4density(v.getPaddingLeft()),
+		// getRate4density(v.getPaddingTop()),
+		// getRate4density(v.getPaddingRight()),
+		// getRate4density(v.getPaddingBottom()));
+
+	}
+
+	public static void rateScale(Context context, View v, boolean isMin, boolean isMargin) {
 		if (v == null)
 			return;
 		if (!ScreenConfig.INIT)
@@ -40,14 +88,14 @@ public class LayoutUtils {
 			ViewGroup.MarginLayoutParams params = (MarginLayoutParams) v.getLayoutParams();
 			params.width = params.width <= 0 ? params.width : getRate4density(params.width);
 			if (!isMin) {
-				params.height = params.height <= 0 ? params.height : (int) (params.height * ScreenConfig.RATE_H + 0.5f) - ScreenConfig.STATUSBARHEIGHT / 2;
+				params.height = params.height <= 0 ? params.height : getRate4densityH(params.height);
 			} else {
 				params.height = params.height <= 0 ? params.height : getRate4density(params.height);
 			}
 			params.leftMargin = params.leftMargin == 0 ? params.leftMargin : getRate4density(params.leftMargin);
 			params.rightMargin = params.rightMargin == 0 ? params.rightMargin : getRate4density(params.rightMargin);
-			params.topMargin = params.topMargin == 0 ? params.topMargin : getRate4density(params.topMargin);
-			params.bottomMargin = params.bottomMargin == 0 ? params.bottomMargin : getRate4density(params.bottomMargin);
+			params.topMargin = params.topMargin == 0 ? params.topMargin : (isMargin ? getRate4densityH(params.topMargin) : getRate4density(params.topMargin));
+			params.bottomMargin = params.bottomMargin == 0 ? params.bottomMargin : (isMargin ? getRate4densityH(params.bottomMargin) : getRate4density(params.bottomMargin));
 			v.setLayoutParams(params);
 
 		} else { // 其他父控件只能适配宽高，
@@ -61,7 +109,6 @@ public class LayoutUtils {
 		}
 		// 适配padding
 		v.setPadding(getRate4density(v.getPaddingLeft()), getRate4density(v.getPaddingTop()), getRate4density(v.getPaddingRight()), getRate4density(v.getPaddingBottom()));
-
 	}
 
 	/**
@@ -69,8 +116,8 @@ public class LayoutUtils {
 	 * 
 	 * @param context
 	 *            上下文
-	 * @param obj
-	 *            需要比例化view的持有者
+	 * @param viewholder
+	 *            需要比例化view的持有者,如果需要view注入请实现 {@linkplain com.xc.lib.layout.FindView FindView}
 	 */
 	public static void reSize(Context context, Object viewholder) {
 		Field[] fields = viewholder.getClass().getDeclaredFields();
@@ -88,6 +135,13 @@ public class LayoutUtils {
 		}
 	}
 
+	/**
+	 * 找到view 在重新比例化尺寸
+	 * 
+	 * @param field
+	 * @param handler
+	 * @param context
+	 */
 	private static void reSize(Field field, Object handler, Context context) {
 		Resize resize = field.getAnnotation(Resize.class);
 		if (resize != null) {
@@ -97,9 +151,14 @@ public class LayoutUtils {
 				if (obj != null) {
 					reSizeForObj(context, obj, resize, field);
 				} else {// 如果当前字段为null ,则检查是否需要赋值
-					if (resize.idEnable() && resize.id() != -1 && (context instanceof Activity)) {
+					if (resize.idEnable() && resize.id() != -1) {
 						// 如果根据id 找到了相应的对象，则赋值
-						View view = ((Activity) context).findViewById(resize.id());
+						View view = null;
+						if (handler instanceof FindView) {
+							view = ((FindView) handler).IfindView(resize.id());
+						} else if (handler instanceof Activity) {
+							view = ((Activity) handler).findViewById(resize.id());
+						}
 						if (view != null) {
 							if (handler instanceof View.OnClickListener) {
 								view.setOnClickListener((View.OnClickListener) handler);
@@ -130,7 +189,11 @@ public class LayoutUtils {
 		if (View.class.isAssignableFrom(obj.getClass())) {
 			// 如果是view的子类才能进行
 			if (resize.enable()) {
-				LayoutUtils.rateScale(context, (View) obj, resize.isMin());
+				if (!ScreenConfig.INITBAR && (context instanceof Activity)) {
+					// 初始化titlebar
+					ScreenConfig.initBar((Activity) context, (View) obj);
+				}
+				LayoutUtils.rateScale(context, (View) obj, resize.isMin(),resize.isMargin());
 				SysDeug.logI("成功适配view field:" + field.getName());
 			}
 			// 如果使用文字适配并且是继承至TextView
@@ -155,42 +218,7 @@ public class LayoutUtils {
 	 * @param v
 	 */
 	public static void rateScaleAndMargin(Context context, View v, boolean isMin) {
-		if (v == null)
-			return;
-		if (!ScreenConfig.INIT)
-			ScreenConfig.init(context);
-		if (v.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
-			RelativeLayout.LayoutParams params = (LayoutParams) v.getLayoutParams();
-			params.width = params.width <= 0 ? params.width : getRate4density(params.width);
-			if (!isMin) {
-				params.height = params.height <= 0 ? params.height : (int) (params.height * ScreenConfig.RATE_H + 0.5f) - ScreenConfig.STATUSBARHEIGHT / 2;
-			} else {
-				params.height = params.height <= 0 ? params.height : getRate4density(params.height);
-			}
-			params.leftMargin = params.leftMargin == 0 ? params.leftMargin : getRate4density(params.leftMargin);
-			params.rightMargin = params.rightMargin == 0 ? params.rightMargin : getRate4density(params.rightMargin);
-			params.topMargin = params.topMargin == 0 ? params.topMargin : getRate4densityH(params.topMargin);
-			params.bottomMargin = params.bottomMargin == 0 ? params.bottomMargin : getRate4densityH(params.bottomMargin);
-			v.setLayoutParams(params);
-
-		} else if (v.getLayoutParams() instanceof LinearLayout.LayoutParams) {
-			LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) v.getLayoutParams();
-			params.width = params.width <= 0 ? params.width : getRate4density(params.width);
-			if (!isMin) {
-				params.height = params.height <= 0 ? params.height : (int) (params.height * ScreenConfig.RATE_H + 0.5f) - ScreenConfig.STATUSBARHEIGHT / 2;
-			} else {
-				params.height = params.height <= 0 ? params.height : getRate4density(params.height);
-			}
-			params.leftMargin = params.leftMargin == 0 ? params.leftMargin : getRate4density(params.leftMargin);
-			params.rightMargin = params.rightMargin == 0 ? params.rightMargin : getRate4density(params.rightMargin);
-
-			params.topMargin = params.topMargin == 0 ? params.topMargin : getRate4densityH(params.topMargin);
-
-			params.bottomMargin = params.bottomMargin == 0 ? params.bottomMargin : getRate4densityH(params.bottomMargin);
-			v.setLayoutParams(params);
-		}
-		v.setPadding(getRate4density(v.getPaddingLeft()), getRate4density(v.getPaddingTop()), getRate4density(v.getPaddingRight()), getRate4density(v.getPaddingBottom()));
-
+		rateScale(context, v, isMin, true);
 	}
 
 	public static int getRate4density(float value) {

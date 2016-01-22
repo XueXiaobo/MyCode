@@ -51,5 +51,9 @@ public @interface Resize {
 	 * @return
 	 */
 	boolean onClick() default false;
+	/**
+	 * 当isMin 为false时 。  确认margin需要按照相同方式计算
+	 */
+	boolean isMargin() default false;
 
 }

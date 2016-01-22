@@ -11,21 +11,22 @@ import com.xc.lib.layout.LayoutUtils;
 import com.xc.lib.layout.ScreenConfig;
 import com.xxb.myutils.R;
 
-public class TestActivity extends BaseActivity implements OnClickListener {
+public class TestActivity extends BaseActivity implements OnClickListener{
 	@Resize(id = R.id.shipei)
 	private View shipei;
 
 	@Resize(id = R.id.test, onClick = true)
-	TextView tv;
+	private TextView tv;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ScreenConfig.init(this);
 		setContentView(R.layout.activity_main);
-		LayoutUtils.reSize(this, this);
+		LayoutUtils.reSize(this, this); //注解适配
 
 		System.out.println(" id : " + shipei.getId() + " tv: " + tv.getId());
+		// 单个适配
 		// view 适配多种屏幕
 		// LayoutUtils.rateScale(this, findViewById(R.id.shipei), true);
 		// 适配文字
