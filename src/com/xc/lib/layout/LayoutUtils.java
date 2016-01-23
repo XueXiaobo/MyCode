@@ -4,10 +4,12 @@ import java.lang.reflect.Field;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.xc.lib.annotation.Resize;
@@ -117,7 +119,8 @@ public class LayoutUtils {
 	 * @param context
 	 *            上下文
 	 * @param viewholder
-	 *            需要比例化view的持有者,如果需要view注入请实现 {@linkplain com.xc.lib.layout.FindView FindView}
+	 *            需要比例化view的持有者,如果需要view注入请实现
+	 *            {@linkplain com.xc.lib.layout.FindView FindView}
 	 */
 	public static void reSize(Context context, Object viewholder) {
 		Field[] fields = viewholder.getClass().getDeclaredFields();
@@ -193,7 +196,7 @@ public class LayoutUtils {
 					// 初始化titlebar
 					ScreenConfig.initBar((Activity) context, (View) obj);
 				}
-				LayoutUtils.rateScale(context, (View) obj, resize.isMin(),resize.isMargin());
+				LayoutUtils.rateScale(context, (View) obj, resize.isMin(), resize.isMargin());
 				SysDeug.logI("成功适配view field:" + field.getName());
 			}
 			// 如果使用文字适配并且是继承至TextView
@@ -209,6 +212,51 @@ public class LayoutUtils {
 
 		} else {
 			SysDeug.logI("该注解只能用于view变量 field:" + field.getName());
+		}
+	}
+
+	/**
+	 * 比例化整个layout,
+	 * 
+	 * @param context
+	 * @param view
+	 * @param init
+	 */
+	public static void rateLayout(Context context, View view, boolean init) {
+		if (view != null && context != null && view.getTag() == null) {
+			//获取statebar高度
+			if (!ScreenConfig.INITBAR && (context instanceof Activity)) {
+				// 初始化titlebar
+				ScreenConfig.initBar((Activity) context, view);
+			}
+			
+			if (view instanceof ViewGroup) {
+				if (!init) { // 如果是初始化则不用比例化
+					LayoutUtils.rateScale(context, view, true);
+					view.setTag("rate");
+				}
+				// 如果是类似listview，viewpager 不直接比例化 需要在adapter适配
+				if (view instanceof AdapterView || view instanceof ViewPager) {
+					return;
+				}
+				// 如果设置了过滤的view也不需要
+				if (ScreenConfig.rsFilter != null && !ScreenConfig.rsFilter.isResize(view)) {
+					return;
+				}
+				// 比例化子view
+				ViewGroup group = (ViewGroup) view;
+				int len = group.getChildCount();
+				for (int i = 0; i < len; i++) {
+					rateLayout(context, group.getChildAt(i), false);
+				}
+
+			} else {
+				LayoutUtils.rateScale(context, view, true);
+				if (view instanceof TextView) {
+					LayoutUtils.setTextSizeForSp((TextView) view);
+				}
+				view.setTag("rate");
+			}
 		}
 	}
 
@@ -231,6 +279,10 @@ public class LayoutUtils {
 
 	public static int getRate4px(float value) {
 		return (int) (value * ScreenConfig.ABS_RATEW + 0.5f);
+	}
+
+	public static int getRate4px(float value, float distWidth) {
+		return (int) (value * (ScreenConfig.SCRREN_W / distWidth) + 0.5f);
 	}
 
 	public static int getRate4pxH(float value) {

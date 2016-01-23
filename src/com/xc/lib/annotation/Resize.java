@@ -18,7 +18,7 @@ public @interface Resize {
 	 * 是否使用view 适配
 	 * 
 	 */
-	boolean enable() default true;
+	boolean enable() default false;
 
 	/**
 	 * 是否是以最小化缩放
@@ -30,7 +30,7 @@ public @interface Resize {
 	 * 是否使用字体适配
 	 * 
 	 */
-	boolean textEnable() default true;
+	boolean textEnable() default false;
 
 	/**
 	 * 适配字体的大小 px值

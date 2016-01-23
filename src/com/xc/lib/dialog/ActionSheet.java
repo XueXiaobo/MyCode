@@ -40,8 +40,7 @@ public class ActionSheet extends Dialog {
 	private TextConfig bottomConfigs;
 
 	public ActionSheet(Context context) {
-		this(context, android.R.style.Theme_Translucent_NoTitleBar, Color
-				.parseColor("#7F000000"));
+		this(context, android.R.style.Theme_Translucent_NoTitleBar, Color.parseColor("#7F000000"));
 	}
 
 	public ActionSheet(Context context, int theme, int bgcolor) {
@@ -63,12 +62,11 @@ public class ActionSheet extends Dialog {
 	public void init(Context context) {
 		bottomConfigs = new TextConfig(textSize, Color.parseColor("#FD4A2E"));
 		setOwnerActivity((Activity) context);
-		height = LayoutUtils.getRate4px(80);
+		height = LayoutUtils.getRate4px(80, 720);
 		if (height == 0) {
 			height = (int) (40 * context.getResources().getDisplayMetrics().density + 0.5f);
 		}
-		android.view.WindowManager.LayoutParams lay = getWindow()
-				.getAttributes();
+		android.view.WindowManager.LayoutParams lay = getWindow().getAttributes();
 		lay.width = android.view.WindowManager.LayoutParams.MATCH_PARENT;
 		lay.height = android.view.WindowManager.LayoutParams.MATCH_PARENT;
 		// getWindow().getDecorView().getBackground().setAlpha(0);
@@ -110,15 +108,11 @@ public class ActionSheet extends Dialog {
 		bottom_tv = new MyActionTextView(getContext());
 		bottom_tv.setId(1000);
 		bottom_tv.setGravity(Gravity.CENTER);
-		view.addView(bottom_tv, RelativeLayout.LayoutParams.MATCH_PARENT,
-				height);
-		RelativeLayout.LayoutParams lp = (LayoutParams) bottom_tv
-				.getLayoutParams();
+		view.addView(bottom_tv, RelativeLayout.LayoutParams.MATCH_PARENT, height);
+		RelativeLayout.LayoutParams lp = (LayoutParams) bottom_tv.getLayoutParams();
 		lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
 		bottom_tv.setLayoutParams(lp);
-		RelativeLayout.LayoutParams lpp = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.MATCH_PARENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams lpp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		lpp.addRule(RelativeLayout.ABOVE, bottom_tv.getId());
 		lpp.bottomMargin = LayoutUtils.getRate4px(17);
 		view.addView(listview, lpp);
@@ -148,15 +142,12 @@ public class ActionSheet extends Dialog {
 			listview.setId(id);
 	}
 
-	private Drawable getRadi(String color, float tl, float tr, float br,
-			float bl) {
-		return Utils.getBg(getContext(), Color.parseColor(color), tl, tr, br,
-				bl, 200);
+	private Drawable getRadi(String color, float tl, float tr, float br, float bl) {
+		return Utils.getBg(getContext(), Color.parseColor(color), tl, tr, br, bl, 200);
 	}
 
 	public StateListDrawable getBg(float tl, float tr, float bl, float br) {
-		return bottom_tv.getDrawable(getRadi(normal_color, tl, tr, br, bl),
-				getRadi(press_color, tl, tr, br, bl));
+		return bottom_tv.getDrawable(getRadi(normal_color, tl, tr, br, bl), getRadi(press_color, tl, tr, br, bl));
 	}
 
 	public void setPostion(int txtSize, int txtColor, int position) {
@@ -235,8 +226,7 @@ public class ActionSheet extends Dialog {
 				TextView tv = new MyActionTextView(getContext());
 				layout.addView(tv);
 
-				RelativeLayout.LayoutParams params = (LayoutParams) tv
-						.getLayoutParams();
+				RelativeLayout.LayoutParams params = (LayoutParams) tv.getLayoutParams();
 				params.height = height;
 				params.width = LayoutParams.MATCH_PARENT;
 				tv.setLayoutParams(params);
@@ -252,8 +242,7 @@ public class ActionSheet extends Dialog {
 			holder.tv.setTextColor(configs[position].textcolor);
 
 			if (getCount() == 1) {
-				holder.tv.setBackgroundDrawable(getBg(ratio, ratio, ratio,
-						ratio));
+				holder.tv.setBackgroundDrawable(getBg(ratio, ratio, ratio, ratio));
 			} else {
 				if (position == 0) {
 					holder.tv.setBackgroundDrawable(getBg(ratio, ratio, 0, 0));
@@ -277,8 +266,7 @@ public class ActionSheet extends Dialog {
 	private AdapterView.OnItemClickListener onitemlistener = new AdapterView.OnItemClickListener() {
 
 		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			cancel();
 			if (onitemclick != null)
 				onitemclick.onItemClick(parent, position);
