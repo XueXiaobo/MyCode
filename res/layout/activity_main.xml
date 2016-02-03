@@ -5,31 +5,44 @@
     android:tag="testMain" >
 
     <RelativeLayout
-        android:id="@+id/shipei"
-        android:layout_width="180dp"
-        android:layout_height="100dp"
-        android:background="@android:color/black"
-        android:tag="shipei" >
-    </RelativeLayout>
-
-    <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="100dp" >
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@android:color/holo_red_dark" />
+        <RelativeLayout
+            android:id="@+id/shipei"
+            android:layout_width="130dp"
+            android:layout_height="100dp"
+            android:background="@android:color/black"
+            android:tag="shipei" >
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/test"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_weight="1"
-            android:text="没那么简单"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/test"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="没那么简单"
+                android:background="@android:color/holo_red_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/test"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="没那么简单"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
