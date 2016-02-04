@@ -3,5 +3,8 @@
 
     <color name="transparent">#00000000</color>
     <color name="transparent20">#33000000</color>
+    <color name="line">#dddddd</color>
+    <color name="button_blue">#418ff8</color>
+    <color name="button_blue_text">#ffffff</color>
 
 </resources>

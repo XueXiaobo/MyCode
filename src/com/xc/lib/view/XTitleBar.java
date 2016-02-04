@@ -47,7 +47,7 @@ public class XTitleBar implements OnClickListener, FindView {
 
 	private XTitlebarDelegate mDelegate;
 	
-	public int leftDefaultBg = R.drawable.pic_left_back_lige;
+	public int leftDefaultBg = R.drawable.xu_pic_left_back_lige;
 
 	public void setDelegate(XTitlebarDelegate delegate) {
 		this.mDelegate = delegate;

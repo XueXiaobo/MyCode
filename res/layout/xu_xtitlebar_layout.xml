@@ -9,7 +9,7 @@
         android:id="@+id/leftLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_transparent"
+        android:background="@drawable/xu_bg_transparent"
         android:orientation="horizontal"
         android:paddingLeft="5dp"
         android:paddingRight="5dp" >
@@ -19,7 +19,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/pic_left_back_lige" />
+            android:background="@drawable/xu_pic_left_back_lige" />
 
         <TextView
             android:id="@+id/leftTv"
@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:background="@drawable/bg_transparent"
+        android:background="@drawable/xu_bg_transparent"
         android:paddingLeft="5dp"
         android:paddingRight="5dp" >
 
