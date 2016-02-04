@@ -8,27 +8,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
-import android.widget.TextView;
 
+import com.xc.lib.Applications;
 import com.xc.lib.layout.LayoutUtils;
-import com.xc.lib.layout.ScreenConfig;
 import com.xc.lib.utils.MyHandler;
 import com.xc.lib.utils.MyHandler.HandleMessageListener;
 
-@SuppressWarnings("unchecked")
-public class BaseActivity extends Activity implements HandleMessageListener, OnScrollListener {
+public class BaseActivity extends Activity implements HandleMessageListener {
 	private MyHandler handler = null;
+	protected BaseActivity mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		super.onCreate(savedInstanceState);
-		// setEdgeTrackingEnabled(EDGE_LEFT);
+		this.mContext = this;
+		Applications.getmApp().addActivity(mContext);
+	}
+
+	/**
+	 * 比例化所有控件
+	 */
+	protected void rateAll() {
+		LayoutUtils.rateLayout(mContext, getRootView(), true);
 	}
 
 	/**
@@ -42,45 +45,6 @@ public class BaseActivity extends Activity implements HandleMessageListener, OnS
 			e.printStackTrace();
 		}
 		return rootView;
-	}
-
-	protected void reFreshPage() {
-	}
-
-	protected <T extends View> T getView(int id) {
-		View childView = findViewById(id);
-		return (T) childView;
-	}
-
-	protected <T extends View> T getRateView(int id, boolean isMin) {
-		View childView = findViewById(id);
-		if (!ScreenConfig.INITBAR) {
-			if (!isMin) {
-				ScreenConfig.addView(childView);
-			} else {
-				rateView(childView, isMin);
-			}
-			ScreenConfig.initBar(this, childView);
-		} else {
-			rateView(childView, isMin);
-		}
-		return (T) childView;
-	}
-
-	protected <T extends View> T getTextView(int id, boolean isMin, float textSize) {
-		View childView = getRateView(id, isMin);
-		if (childView instanceof TextView) {
-			TextView tv = (TextView) childView;
-			LayoutUtils.setTextSize(tv, textSize);
-		}
-		return (T) childView;
-	}
-
-	/**
-	 * 控件比例化
-	 */
-	protected void rateView(View v, boolean isMin) {
-		LayoutUtils.rateScale(this, v, isMin);
 	}
 
 	protected void showSoftInput(EditText view) {
@@ -102,32 +66,5 @@ public class BaseActivity extends Activity implements HandleMessageListener, OnS
 	@Override
 	public void handleMessage(Message arg0) {
 
-	}
-
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-	}
-
-	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		if (!isonBottom)
-			return;
-		if (firstVisibleItem + visibleItemCount >= totalItemCount) {
-			onBottom();
-		}
-	}
-
-	private boolean isonBottom = false;
-
-	protected void onBottomStop() {
-		isonBottom = false;
-	}
-
-	protected void onBottomStart() {
-		isonBottom = true;
-	}
-
-	public void onBottom() {
 	}
 }

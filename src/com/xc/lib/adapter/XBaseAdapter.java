@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.xc.lib.layout.ViewHolder;
+import com.xc.lib.utils.IAdapterMeasure;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -58,6 +59,11 @@ public abstract class XBaseAdapter<T> extends BaseAdapter {
 		if (convertView == null) {
 			convertView = inflater.inflate(getLayout(position), null);
 		}
+		if (parent instanceof IAdapterMeasure && ((IAdapterMeasure) parent).isMeasure()) {
+			//如果只是测试尺寸则不需要绑定数据
+			return convertView;
+		}
+
 		bindData(getItem(position), position, vm.setView(convertView));
 		return convertView;
 	}
@@ -77,6 +83,7 @@ public abstract class XBaseAdapter<T> extends BaseAdapter {
 		public View getView() {
 			return view;
 		}
+
 		public <E extends View> E getViewForRes(int id) {
 			return ViewHolder.getView(view, id);
 		}

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,31 +17,28 @@ import com.xc.lib.layout.LayoutUtils;
 import com.xc.lib.view.MyCustViewPager;
 import com.xc.lib.view.MyPageAdapter;
 import com.xc.lib.view.PhotoView;
-import com.xc.lib.xutils.BitmapUtils;
-import com.xc.lib.xutils.bitmap.BitmapDisplayConfig;
-import com.xc.lib.xutils.bitmap.core.BitmapSize;
 
 public class ScanImageView extends Dialog {
 	private int bgcolor;
 	private TextView numTv;
 	private MyCustViewPager pager;
-	private BitmapUtils bu;
 	private List<View> list;
 	private int last;
+	private ScanLoader scanloader;
 
 	public ScanImageView(Context context) {
 		this(context, Color.BLACK);
+	}
+
+	public ScanImageView setScanLoader(ScanLoader scanloader) {
+		this.scanloader = scanloader;
+		return this;
 	}
 
 	public ScanImageView(Context context, int bgcolor, int theme) {
 		super(context, theme);
 		this.bgcolor = bgcolor;
 		init(context);
-	}
-
-	public ScanImageView setLoader(BitmapUtils bu) {
-		this.bu = bu;
-		return this;
 	}
 
 	public void setData(String[] imgs, int current) {
@@ -84,22 +82,14 @@ public class ScanImageView extends Dialog {
 		return view;
 	}
 
-	private BitmapDisplayConfig bdc;
-
 	List<View> onCreateView(String[] imgs) {
 		List<View> list = new ArrayList<View>();
 		for (int i = 0; i < imgs.length; i++) {
 			if (imgs[i] == null)
 				continue;
 			PhotoView photo = new PhotoView(getContext());
-			if (bdc == null) {
-				bdc = new BitmapDisplayConfig();
-				bdc.setBitmapMaxSize(new BitmapSize(720, 1024));
-			}
-			bu.display(photo, imgs[i], bdc);
-			//
-			// bu.displayImage(imgs[i], photo, image_w > 0 ? image_w : 1024,
-			// image_h > 0 ? image_h : 720, defaultSource);
+			if (scanloader != null)
+				scanloader.display(photo, imgs[i]);
 			list.add(photo);
 		}
 		return list;
@@ -110,8 +100,11 @@ public class ScanImageView extends Dialog {
 		@Override
 		public void onPageSelected(int arg0) {
 			if (last != arg0) {
-				numTv.setText((arg0 + 1) + "/" + list.size());
+				int size = list.size();
+				numTv.setText((arg0 + 1) + "/" + size);
 				last = arg0;
+				if (scanloader != null)
+					scanloader.onPageChange(numTv, arg0, size);
 			}
 		}
 
@@ -125,5 +118,17 @@ public class ScanImageView extends Dialog {
 
 		}
 	};
+
+	/**
+	 * 浏览适配器
+	 * 
+	 * @author 62568_000
+	 * 
+	 */
+	public interface ScanLoader {
+		void display(ImageView imageview, String path);
+
+		void onPageChange(TextView tv, int pos, int size);
+	}
 
 }

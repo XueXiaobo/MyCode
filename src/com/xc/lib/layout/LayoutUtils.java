@@ -163,7 +163,7 @@ public class LayoutUtils {
 							view = ((Activity) handler).findViewById(resize.id());
 						}
 						if (view != null) {
-							if (handler instanceof View.OnClickListener) {
+							if (resize.onClick() && handler instanceof View.OnClickListener) {
 								view.setOnClickListener((View.OnClickListener) handler);
 							}
 							field.set(handler, view);
