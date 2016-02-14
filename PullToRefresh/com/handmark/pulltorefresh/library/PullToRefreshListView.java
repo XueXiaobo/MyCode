@@ -33,7 +33,7 @@ import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.xc.lib.view.XUListView;
 import com.xxb.myutils.R;
-
+//com.handmark.pulltorefresh.library.PullToRefreshListView
 public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView> {
 
 	private LoadingLayout mHeaderLoadingView;

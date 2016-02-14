@@ -1,17 +1,18 @@
 package com.xc.lib.tab;
 
-import android.view.View;
-
 public class TabItem {
-	public View tabView;
-	public BaseTabView replace;
+	public TabChild tabView;
+	public BaseTabView tabContent;
+
 	/**
 	 * 
-	 * @param replace   需要变化的页面
-	 * @param tabView   标签的view
+	 * @param replace
+	 *            需要变化的页面
+	 * @param tabView
+	 *            标签的view
 	 */
-	public TabItem(BaseTabView replace, View tabView) {
-		this.replace = replace;
+	public TabItem(BaseTabView tabContent, TabChild tabView) {
+		this.tabContent = tabContent;
 		this.tabView = tabView;
 	}
 }

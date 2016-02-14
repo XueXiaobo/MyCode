@@ -171,8 +171,9 @@ public class LayoutUtils {
 						} else {
 							SysDeug.logI("field:" + field.getName() + "未找到 view");
 						}
+					} else {
+						SysDeug.logI("该注解指向一个null对象 field:" + field.getName());
 					}
-					SysDeug.logI("该注解指向一个null对象 field:" + field.getName());
 				}
 
 			} catch (Exception e) {
@@ -224,12 +225,12 @@ public class LayoutUtils {
 	 */
 	public static void rateLayout(Context context, View view, boolean init) {
 		if (view != null && context != null && view.getTag() == null) {
-			//获取statebar高度
+			// 获取statebar高度
 			if (!ScreenConfig.INITBAR && (context instanceof Activity)) {
 				// 初始化titlebar
 				ScreenConfig.initBar((Activity) context, view);
 			}
-			
+
 			if (view instanceof ViewGroup) {
 				if (!init) { // 如果是初始化则不用比例化
 					LayoutUtils.rateScale(context, view, true);
