@@ -1,8 +1,5 @@
 package com.xc.lib;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.Application;
 import android.os.Build;
@@ -11,6 +8,7 @@ import android.text.TextUtils;
 
 import com.xc.lib.layout.ScreenConfig;
 import com.xc.lib.utils.AndroidUtil;
+import com.xc.lib.utils.AppMutilsLaunch;
 import com.xc.lib.utils.LocalPreference;
 import com.xc.lib.utils.PhoneUtil;
 import com.xc.lib.utils.TimeUtils;
@@ -18,7 +16,7 @@ import com.xc.lib.utils.TimeUtils;
 public class Applications extends Application {
 	private static Applications mApp;
 	private static LocalPreference mPreference;
-	private static List<Activity> mActivityList;
+	private static AppSubJect appsub;
 
 	// 内存中根目录
 	private static String mMemoryDir;
@@ -38,37 +36,34 @@ public class Applications extends Application {
 
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
 		super.onCreate();
+		if (AppMutilsLaunch.isMutil(this, getPackageName()))// 避免多次启动
+			return;
 		mApp = this;
 		init();
-
 	}
-
+	
 	public void addActivity(Activity activity) {
-		mActivityList.add(activity);
+		appsub.attch(activity);
 	}
 
+	public void removeActivity(Activity activity) {
+		appsub.detach(activity);
+	}
+	/**
+	 * 退出app
+	 */
 	public void existApp() {
-		for (Activity activity : mActivityList) {
-			if (activity != null) {
-				try {
-					activity.finish();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		appsub.exit();
 	}
 
 	private void init() {
 		ScreenConfig.init(this);
 		mPreference = LocalPreference.getInstance(this);
-		mActivityList = new ArrayList<Activity>();
+		appsub = new AppSubJect();
 		mMemoryDir = Environment.getDataDirectory() + "/" + this.getPackageName() + "/files/";
 		mSdcardAppDir = Environment.getExternalStorageDirectory() + "/" + this.getPackageName() + "/";
 		mSdcardDownloadDir = mSdcardAppDir + "download/";
-
 		mVersionCode = AndroidUtil.getVersionCode(mApp);
 		mVersionName = AndroidUtil.getVersionName(mApp);
 		imei = PhoneUtil.getImei(this);
@@ -82,7 +77,7 @@ public class Applications extends Application {
 			LocalPreference.getInstance(mApp).setString("installtime", installTime);
 		}
 	}
-	
+
 	public static String getImei() {
 		return imei;
 	}

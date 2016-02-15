@@ -23,6 +23,8 @@ import android.graphics.RectF;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.InputFilter;
+import android.widget.TextView;
 
 public class Utils {
 
@@ -184,5 +186,33 @@ public class Utils {
 
 		return output;
 	}
+	
+	/**
+	 * 添加文字过滤器
+	 * 
+	 * @param view
+	 * @param filter
+	 */
+	public static void addFilter(TextView view, InputFilter filter) {
+		view.setFilters(addFilter(view.getFilters(), filter));
+	}
+
+	public static InputFilter[] addFilter(InputFilter[] fileters, InputFilter filter) {
+		InputFilter[] fs = null;
+		if (fileters == null || fileters.length == 0) {
+			fs = new InputFilter[1];
+			fs[0] = filter;
+		} else {
+			int len = fileters.length;
+			fs = new InputFilter[len + 1];
+			for (int i = 0; i < len; i++) {
+				fs[i] = fileters[i];
+			}
+			fs[len] = filter;
+		}
+
+		return fs;
+	}
+
 
 }

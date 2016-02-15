@@ -7,7 +7,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.xc.lib.activity.BaseActivity;
+import com.xc.lib.activity.XBaseActivity;
 import com.xc.lib.tab.BaseTabView;
 import com.xc.lib.tab.TabBaseAdapter;
 import com.xc.lib.tab.TabChild;
@@ -16,7 +16,7 @@ import com.xc.lib.tab.XUTabLayout;
 import com.xc.lib.view.XTitleBar;
 import com.xxb.myutils.R;
 
-public class TestActivity extends BaseActivity implements OnClickListener {
+public class TestActivity extends XBaseActivity implements OnClickListener {
 	private XTitleBar titlebar;
 	private XUTabLayout xuTabLayout;
 

@@ -30,6 +30,15 @@ public class XUTabLayout implements FindView, OnClickListener {
 	private Activity activity;
 	private TabBaseAdapter adapter;
 
+	/**
+	 * 当前下标
+	 */
+	private int currentIndex = -1;
+
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
 	public RelativeLayout getXuLayout() {
 		return xuLayout;
 	}
@@ -128,10 +137,15 @@ public class XUTabLayout implements FindView, OnClickListener {
 		int len = items.size();
 		for (int i = 0; i < len; i++) {
 			TabItem item = items.get(i);
-			if (view == item.tabView.getView()) {
+			if (view == item.tabView.getView() && currentIndex != i) {
+				if (changelistener != null) {// 先响应changlistener
+					changelistener.onChange(currentIndex, i);
+				}
+				this.currentIndex = i;
+				//改变tab状态
 				item.tabView.onSelected();
 				viewpager.setCurrentItem(i, false);
-			} else {
+			} else {//改变tab状态
 				item.tabView.unSelected();
 			}
 		}
@@ -153,6 +167,18 @@ public class XUTabLayout implements FindView, OnClickListener {
 	@Override
 	public void onClick(View v) {
 		setCurrentByView(v);
+	}
+	/**
+	 * tab改变监听事件
+	 */
+	private TabChangeListener changelistener;
+
+	public void setTabChangeListener(TabChangeListener changelistener) {
+		this.changelistener = changelistener;
+	}
+
+	public interface TabChangeListener {
+		void onChange(int oldIndex, int newIndex);
 	}
 
 }

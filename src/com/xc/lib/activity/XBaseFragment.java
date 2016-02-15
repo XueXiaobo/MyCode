@@ -12,7 +12,7 @@ import com.xc.lib.layout.LayoutUtils;
 import com.xc.lib.utils.MyHandler;
 import com.xc.lib.utils.MyHandler.HandleMessageListener;
 
-public class BaseFragment extends Fragment implements HandleMessageListener {
+public class XBaseFragment extends Fragment implements HandleMessageListener {
 	private MyHandler handler = null;
 	protected Activity mContext;
 

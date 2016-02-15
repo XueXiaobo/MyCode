@@ -1,9 +1,9 @@
 package com.xc.lib.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -15,9 +15,9 @@ import com.xc.lib.layout.LayoutUtils;
 import com.xc.lib.utils.MyHandler;
 import com.xc.lib.utils.MyHandler.HandleMessageListener;
 
-public class BaseActivity extends Activity implements HandleMessageListener {
+public class XBaseFragmentActivity extends FragmentActivity implements HandleMessageListener {
 	private MyHandler handler = null;
-	protected BaseActivity mContext;
+	protected XBaseFragmentActivity mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +25,16 @@ public class BaseActivity extends Activity implements HandleMessageListener {
 		super.onCreate(savedInstanceState);
 		this.mContext = this;
 		Applications.getmApp().addActivity(mContext);
+	}
+
+	public void closeApp() {
+		Applications.getmApp().existApp();
+	}
+
+	@Override
+	public void finish() {
+		Applications.getmApp().removeActivity(mContext);
+		super.finish();
 	}
 
 	/**
