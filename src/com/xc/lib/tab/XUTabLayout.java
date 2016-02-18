@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -95,7 +96,7 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 	 */
 	public void setMode(TabMode model) {
 		this.currentMode = model;
-		if (model == TabMode.SCROLL) {
+		if (model == TabMode.SCROLL || model == TabMode.RAMPSCROLL) {
 			viewpager.setCanScroll(true);
 		} else {
 			viewpager.setCanScroll(false);
@@ -166,7 +167,6 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 		for (int i = 0; i < len; i++) {
 			TabItem item = items.get(i);
 			if (i == index) {
-				this.currentIndex = i;
 				// 改变tab状态
 				item.tabView.onSelected();
 			} else {// 改变tab状态
@@ -175,6 +175,12 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 		}
 	}
 
+	/**
+	 * 找到view所在的下标
+	 * 
+	 * @param v
+	 * @return
+	 */
 	private int findIndexByView(View v) {
 		int len = items.size();
 		for (int i = 0; i < len; i++) {
@@ -188,7 +194,7 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 	public void onClick(View v) {
 		try {
 			int index = findIndexByView(v);
-			if (index != -1)
+			if (index != -1) // tab点击切换
 				viewpager.setCurrentItem(index, false);
 		} catch (Exception e) {
 		}
@@ -210,12 +216,13 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
-		rsd.setScrollState(state);
+		rsd.state = state;
 	}
 
 	@Override
 	public void onPageScrolled(int index, float offset, int offsetPixel) {
-		rsd.setScroll(index, offset, offsetPixel);
+		if (currentMode == TabMode.RAMPSCROLL)
+			rsd.setScroll(index, offset, offsetPixel);
 	}
 
 	@Override
@@ -223,9 +230,11 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 		if (changelistener != null) {
 			changelistener.onChange(currentIndex, index);
 		}
+		this.currentIndex = index;
 		// 滑动渐变不用这个
-		if (currentMode == TabMode.NORMAL || currentMode == TabMode.SCROLL)
+		if (rsd.state == ViewPager.SCROLL_STATE_IDLE) {
 			setCurrentIndex(index);
+		}
 	}
 
 	// --------------------内部定义的一些类、枚举等
@@ -257,7 +266,7 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 		RAMPSCROLL {
 			@Override
 			public String getName() {
-				return "滑动渐变-暂未实现";
+				return "滑动渐变";
 			}
 		},
 		NORMAL {
@@ -277,16 +286,7 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 	// 滑动数据
 	class RampScrollData {
 
-		private int state = 0;
-
-		/**
-		 * 设置滑动状态
-		 * 
-		 * @param state
-		 */
-		public void setScrollState(int state) {
-			this.state = state;
-		}
+		public int state = 0;
 
 		/**
 		 * 设置滑动数据
@@ -296,6 +296,20 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 		 * @param offsetPixel
 		 */
 		public void setScroll(int index, float offset, int offsetPixel) {
+			if (offsetPixel == 0) {
+				setCurrentIndex(currentIndex);
+				return;
+			}
+			if (offset > 0.5) { // 如果滑动大于0.5 则是下一个页面
+				index++;
+			}
+			if (offset > 0.5) {
+				items.get(index).tabView.onScroll(offset);
+				items.get(index - 1).tabView.onScroll(1 - offset);
+			} else {
+				items.get(index).tabView.onScroll(1 - offset);
+				items.get(index + 1).tabView.onScroll(offset);
+			}
 
 		}
 	}

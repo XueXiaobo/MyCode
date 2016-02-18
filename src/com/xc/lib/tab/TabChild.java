@@ -20,4 +20,8 @@ public abstract class TabChild {
 	 * 未选中状态
 	 */
 	public void unSelected(){}
+	/**
+	 * 滑动渐变 
+	 */
+	public void onScroll(float offset){}
 }

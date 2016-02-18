@@ -28,12 +28,17 @@ public class TestActivity extends XBaseActivity implements OnClickListener {
 		rateAll();
 		titlebar = XTitleBar.createDefault(this);
 		xuTabLayout = new XUTabLayout(this);
-
 		titlebar.setLeft(titlebar.leftDefaultBg, "可以的");
 		titlebar.setMid("可以测试啊");
 		titlebar.setRight("右边");
 		xuTabLayout.setAdapter(new MyAdapter());
-		xuTabLayout.setMode(TabMode.SCROLL);
+		xuTabLayout.setMode(TabMode.RAMPSCROLL);
+		xuTabLayout.setTabChangeListener(new XUTabLayout.TabChangeListener() {
+
+			@Override
+			public void onChange(int oldIndex, int newIndex) {
+			}
+		});
 
 	}
 
@@ -71,18 +76,25 @@ public class TestActivity extends XBaseActivity implements OnClickListener {
 
 		@Override
 		public View getView() {
+			view.setBackgroundColor(Color.RED);
 			return view;
 		}
 
 		@Override
+		public void onScroll(float offset) {
+			view.getBackground().setAlpha((int) (255 * offset));
+			super.onScroll(offset);
+		}
+
+		@Override
 		public void onSelected() {
-			view.setBackgroundColor(Color.RED);
+			view.getBackground().setAlpha(255);
 			super.onSelected();
 		}
 
 		@Override
 		public void unSelected() {
-			view.setBackgroundColor(Color.WHITE);
+			view.getBackground().setAlpha(0);
 			super.unSelected();
 		}
 
