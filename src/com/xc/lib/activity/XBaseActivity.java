@@ -14,7 +14,11 @@ import com.xc.lib.Applications;
 import com.xc.lib.layout.LayoutUtils;
 import com.xc.lib.utils.MyHandler;
 import com.xc.lib.utils.MyHandler.HandleMessageListener;
-
+/**
+ * 基础的activity
+ * @author 62568_000
+ *
+ */
 public class XBaseActivity extends Activity implements HandleMessageListener {
 	private MyHandler handler = null;
 	protected XBaseActivity mContext;
@@ -60,7 +64,10 @@ public class XBaseActivity extends Activity implements HandleMessageListener {
 		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 	}
-
+	/**
+	 * 拿到uihandler
+	 * @return
+	 */
 	public Handler getHandler() {
 		if (handler == null)
 			handler = new MyHandler(this);

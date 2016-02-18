@@ -14,7 +14,11 @@ import com.xc.lib.Applications;
 import com.xc.lib.layout.LayoutUtils;
 import com.xc.lib.utils.MyHandler;
 import com.xc.lib.utils.MyHandler.HandleMessageListener;
-
+/**
+ * 基础的activity
+ * @author 62568_000
+ *
+ */
 public class XBaseFragmentActivity extends FragmentActivity implements HandleMessageListener {
 	private MyHandler handler = null;
 	protected XBaseFragmentActivity mContext;

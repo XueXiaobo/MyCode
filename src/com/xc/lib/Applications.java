@@ -16,7 +16,7 @@ import com.xc.lib.utils.TimeUtils;
 public class Applications extends Application {
 	private static Applications mApp;
 	private static LocalPreference mPreference;
-	private static AppSubJect appsub;
+	private AppSubJect appsub;
 
 	// 内存中根目录
 	private static String mMemoryDir;
@@ -42,14 +42,21 @@ public class Applications extends Application {
 		mApp = this;
 		init();
 	}
-	
+
+	/**
+	 * 添加activity到队列中
+	 */
 	public void addActivity(Activity activity) {
 		appsub.attch(activity);
 	}
-
+	/**
+	 * 从队列中移除一个
+	 * @param activity
+	 */
 	public void removeActivity(Activity activity) {
 		appsub.detach(activity);
 	}
+
 	/**
 	 * 退出app
 	 */

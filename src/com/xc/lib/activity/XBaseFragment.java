@@ -11,7 +11,11 @@ import android.widget.EditText;
 import com.xc.lib.layout.LayoutUtils;
 import com.xc.lib.utils.MyHandler;
 import com.xc.lib.utils.MyHandler.HandleMessageListener;
-
+/**
+ * 基础的activity
+ * @author 62568_000
+ *
+ */
 public class XBaseFragment extends Fragment implements HandleMessageListener {
 	private MyHandler handler = null;
 	protected Activity mContext;

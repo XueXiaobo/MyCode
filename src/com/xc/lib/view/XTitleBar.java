@@ -48,7 +48,10 @@ public class XTitleBar implements OnClickListener, FindView {
 	private XTitlebarDelegate mDelegate;
 	
 	public int leftDefaultBg = R.drawable.xu_pic_left_back_lige;
-
+	/**
+	 * 设置代理事件
+	 * @param delegate
+	 */
 	public void setDelegate(XTitlebarDelegate delegate) {
 		this.mDelegate = delegate;
 	}
@@ -56,7 +59,11 @@ public class XTitleBar implements OnClickListener, FindView {
 	public XTitleBar(Activity mContext, int leftVis, int midVis, int rightVis) {
 		this(mContext, null, leftVis, midVis, rightVis);
 	}
-
+	/**
+	 * 快速创建一个默认的titlebar
+	 * @param activity
+	 * @return
+	 */
 	public static XTitleBar createDefault(Activity activity) {
 		return new XTitleBar(activity, View.GONE, View.GONE, View.GONE);
 	}
@@ -79,7 +86,6 @@ public class XTitleBar implements OnClickListener, FindView {
 			}
 		});
 	}
-
 	public void setLeftVis(int vis) {
 		leftLayout.setVisibility(vis);
 	}
@@ -147,14 +153,19 @@ public class XTitleBar implements OnClickListener, FindView {
 	public void setRight(String text) {
 		setRight(0, text);
 	}
-
+	/**
+	 * 设置中间的字
+	 * @param text
+	 */
 	public void setMid(String text) {
 		if (text != null) {
 			midTv.setText(text);
 			midTv.setVisibility(View.VISIBLE);
 		}
 	}
-
+	/**
+	 * bindview view寻找器
+	 */
 	@Override
 	public View IfindView(int id) {
 		if (rootView != null)
