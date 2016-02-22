@@ -1,8 +1,14 @@
 package com.xc.lib.view;
 
+import java.lang.reflect.Field;
+
 import android.app.Activity;
+import android.os.Build.VERSION;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -11,6 +17,7 @@ import android.widget.TextView;
 import com.xc.lib.annotation.Resize;
 import com.xc.lib.layout.FindView;
 import com.xc.lib.layout.LayoutUtils;
+import com.xc.lib.utils.SysDeug;
 import com.xxb.myutils.R;
 
 /**
@@ -46,10 +53,12 @@ public class XTitleBar implements OnClickListener, FindView {
 	private View rootView;
 
 	private XTitlebarDelegate mDelegate;
-	
+
 	public int leftDefaultBg = R.drawable.xu_pic_left_back_lige;
+
 	/**
 	 * 设置代理事件
+	 * 
 	 * @param delegate
 	 */
 	public void setDelegate(XTitlebarDelegate delegate) {
@@ -59,13 +68,32 @@ public class XTitleBar implements OnClickListener, FindView {
 	public XTitleBar(Activity mContext, int leftVis, int midVis, int rightVis) {
 		this(mContext, null, leftVis, midVis, rightVis);
 	}
+
 	/**
 	 * 快速创建一个默认的titlebar
+	 * 
 	 * @param activity
 	 * @return
 	 */
 	public static XTitleBar createDefault(Activity activity) {
 		return new XTitleBar(activity, View.GONE, View.GONE, View.GONE);
+	}
+
+	/**
+	 * 快速创建一个默认的titlebar
+	 * 
+	 * @param activity
+	 *            当前activity
+	 * @param isFullTool
+	 *            是否是充满的状态栏
+	 * @return
+	 */
+	public static XTitleBar createDefault(Activity activity, boolean isFullTool) {
+		XTitleBar tb = createDefault(activity);
+		if (isFullTool) {
+			tb.setFullToolBar();
+		}
+		return tb;
 	}
 
 	public XTitleBar(Activity mContext, View root, int leftVis, int midVis, int rightVis) {
@@ -78,14 +106,15 @@ public class XTitleBar implements OnClickListener, FindView {
 		setRightVis(rightVis);
 		setMidVis(midVis);
 		setDelegate(new XTitlebarDelegate() {
-			
+
 			@Override
 			public void onTitleClick(int clickTag) {
-				if(clickTag == left)//设置默认点击返回
+				if (clickTag == left)// 设置默认点击返回
 					XTitleBar.this.mContext.onBackPressed();
 			}
 		});
 	}
+
 	public void setLeftVis(int vis) {
 		leftLayout.setVisibility(vis);
 	}
@@ -153,8 +182,10 @@ public class XTitleBar implements OnClickListener, FindView {
 	public void setRight(String text) {
 		setRight(0, text);
 	}
+
 	/**
 	 * 设置中间的字
+	 * 
 	 * @param text
 	 */
 	public void setMid(String text) {
@@ -163,6 +194,7 @@ public class XTitleBar implements OnClickListener, FindView {
 			midTv.setVisibility(View.VISIBLE);
 		}
 	}
+
 	/**
 	 * bindview view寻找器
 	 */
@@ -183,16 +215,13 @@ public class XTitleBar implements OnClickListener, FindView {
 		return leftLayout;
 	}
 
-
 	public RelativeLayout getRightLayout() {
 		return rightLayout;
 	}
 
-
 	public TextView getLeftTv() {
 		return leftTv;
 	}
-
 
 	public TextView getRightTv() {
 		return rightTv;
@@ -202,11 +231,9 @@ public class XTitleBar implements OnClickListener, FindView {
 		return midTv;
 	}
 
-
 	public ImageView getLeftImg() {
 		return leftImg;
 	}
-
 
 	public ImageView getRightImg() {
 		return rightImg;
@@ -218,4 +245,38 @@ public class XTitleBar implements OnClickListener, FindView {
 		void onTitleClick(int clickTag);
 	}
 
+	/**
+	 * 让状态栏显示和titlebar一样的颜色 4.4以上的系统
+	 */
+	public void setFullToolBar() {
+		if (VERSION.SDK_INT > 18) {
+			Window window = mContext.getWindow();
+			window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+			int statusBar = getStatusBarHeight();
+			ViewGroup.LayoutParams params = layoutView.getLayoutParams();
+			params.height = params.height + statusBar;
+			layoutView.setLayoutParams(params);
+			layoutView.setPadding(0, statusBar, 0, 0);
+		} else {
+			SysDeug.logE("titlebar error - > 系统版本必须大于4.4");
+		}
+	}
+
+	public int getStatusBarHeight() {
+		Class<?> c = null;
+		Object obj = null;
+		Field field = null;
+		int x = 0, statusBarHeight = 0;
+		try {
+			c = Class.forName("com.android.internal.R$dimen");
+			obj = c.newInstance();
+			field = c.getField("status_bar_height");
+			x = Integer.parseInt(field.get(obj).toString());
+			statusBarHeight = mContext.getResources().getDimensionPixelSize(x);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		return statusBarHeight;
+	}
 }

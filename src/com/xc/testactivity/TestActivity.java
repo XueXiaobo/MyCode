@@ -26,7 +26,7 @@ public class TestActivity extends XBaseActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		rateAll();
-		titlebar = XTitleBar.createDefault(this);
+		titlebar = XTitleBar.createDefault(this,true);
 		xuTabLayout = new XUTabLayout(this);
 		titlebar.setLeft(titlebar.leftDefaultBg, "可以的");
 		titlebar.setMid("可以测试啊");
@@ -37,9 +37,9 @@ public class TestActivity extends XBaseActivity implements OnClickListener {
 
 			@Override
 			public void onChange(int oldIndex, int newIndex) {
+				//TODO do something
 			}
 		});
-
 	}
 	
 	class MyAdapter extends XBaseTabAdapter {
