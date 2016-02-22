@@ -22,7 +22,7 @@ import com.xxb.myutils.R;
  * @author xxb
  * @version v1.0 创建时间：2016年2月14日 上午11:29:30
  */
-public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListener {
+public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListener, BaseTabInterface {
 	// 绑定view
 	@Resize(id = R.id.xuLayout)
 	private RelativeLayout xuLayout;
@@ -78,17 +78,21 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 	}
 
 	/**
-	 * 默认
+	 * 默认底部高度
 	 */
-	private int bottomTabHeight = LayoutUtils.getRate4px(60, 720);
+	private int bottomTabHeight = LayoutUtils.getRate4px(70, 720);
 
 	/**
-	 * 设置底部tab高度
+	 * 设置底部tab高度   
 	 * 
-	 * @param value
+	 * @param value   值
+	 * @param isPx    是否是像素，false 会进行比例计算
 	 */
-	public void setBottomTabHeight(int value) {
-		this.bottomTabHeight = value;
+	public void setBottomTabHeight(int value, boolean isPx) {
+		if (isPx)
+			this.bottomTabHeight = value;
+		else
+			this.bottomTabHeight = LayoutUtils.getRate4px(value, 720);;
 	}
 
 	/**
@@ -262,7 +266,6 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 				return "滑动模式";
 			}
 		},
-		// 暂时未实现
 		RAMPSCROLL {
 			@Override
 			public String getName() {
@@ -289,9 +292,10 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 		public int state = 0;
 
 		/**
-		 * 设置滑动数据
+		 * 设置滑动数据 犯2
 		 * 
 		 * @param index
+		 *            屏幕左边的index
 		 * @param offset
 		 * @param offsetPixel
 		 */
@@ -300,17 +304,91 @@ public class XUTabLayout implements FindView, OnClickListener, OnPageChangeListe
 				setCurrentIndex(currentIndex);
 				return;
 			}
-			if (offset > 0.5) { // 如果滑动大于0.5 则是下一个页面
-				index++;
-			}
-			if (offset > 0.5) {
-				items.get(index).tabView.onScroll(offset);
-				items.get(index - 1).tabView.onScroll(1 - offset);
-			} else {
-				items.get(index).tabView.onScroll(1 - offset);
-				items.get(index + 1).tabView.onScroll(offset);
-			}
+			items.get(index).tabView.onScroll(1 - offset);
+			items.get(index + 1).tabView.onScroll(offset);
+			// if (offset > 0.5) { // 如果滑动大于0.5 则是下一个页面
+			// index++;
+			// }
+			// if (offset > 0.5) {
+			// items.get(index - 1).tabView.onScroll(1 - offset);
+			// items.get(index).tabView.onScroll(offset);
+			// } else {
+			// items.get(index).tabView.onScroll(1 - offset);
+			// items.get(index + 1).tabView.onScroll(offset);
+			// }
 
+		}
+	}
+
+	/**
+	 * 会执行basetabview相应的方法 需要手动调用
+	 */
+	@Override
+	public void onCreate() {
+		if (items == null)
+			return;
+		for (TabItem item : items) {
+			item.tabContent.onCreate();
+		}
+	}
+
+	/**
+	 * 会执行basetabview相应的方法 需要手动调用
+	 */
+	@Override
+	public void onResume() {
+		if (items == null)
+			return;
+		for (TabItem item : items) {
+			item.tabContent.onResume();
+		}
+	}
+
+	/**
+	 * 会执行basetabview相应的方法 需要手动调用
+	 */
+	@Override
+	public void onStart() {
+		if (items == null)
+			return;
+		for (TabItem item : items) {
+			item.tabContent.onStart();
+		}
+	}
+
+	/**
+	 * 会执行basetabview相应的方法 需要手动调用
+	 */
+	@Override
+	public void onPause() {
+		if (items == null)
+			return;
+		for (TabItem item : items) {
+			item.tabContent.onPause();
+		}
+	}
+
+	/**
+	 * 会执行basetabview相应的方法 需要手动调用
+	 */
+	@Override
+	public void onStop() {
+		if (items == null)
+			return;
+		for (TabItem item : items) {
+			item.tabContent.onStop();
+		}
+	}
+
+	/**
+	 * 会执行basetabview相应的方法 需要手动调用
+	 */
+	@Override
+	public void onDestroy() {
+		if (items == null)
+			return;
+		for (TabItem item : items) {
+			item.tabContent.onDestroy();
 		}
 	}
 

@@ -41,12 +41,12 @@ public class TestActivity extends XBaseActivity implements OnClickListener {
 		});
 
 	}
-
+	
 	class MyAdapter extends XBaseTabAdapter {
 
 		@Override
 		public int getCount() {
-			return 3;
+			return 4;
 		}
 
 		@Override
