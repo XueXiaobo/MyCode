@@ -84,7 +84,7 @@ public class ScreenConfig {
 			SCRREN_H = dm.heightPixels;
 			if (dm.widthPixels > dm.heightPixels) {
 				SCRREN_W = dm.heightPixels;
-				SCRREN_H = dm.widthPixels;
+				SCRREN_H = dm.widthPixels;   
 			}
 
 			DENSITY = dm.density;
