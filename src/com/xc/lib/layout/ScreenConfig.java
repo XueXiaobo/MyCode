@@ -82,6 +82,11 @@ public class ScreenConfig {
 			DisplayMetrics dm = context.getResources().getDisplayMetrics();
 			SCRREN_W = dm.widthPixels;
 			SCRREN_H = dm.heightPixels;
+			if (dm.widthPixels > dm.heightPixels) {
+				SCRREN_W = dm.heightPixels;
+				SCRREN_H = dm.widthPixels;
+			}
+
 			DENSITY = dm.density;
 			SCALEDENSITY = dm.scaledDensity;
 			ABS_RATEW = SCRREN_W / RATIOWIDTH;
@@ -136,20 +141,22 @@ public class ScreenConfig {
 		if (count != 0)
 			return;
 		count++;
-		v.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+		v.getViewTreeObserver().addOnPreDrawListener(
+				new ViewTreeObserver.OnPreDrawListener() {
 
-			@Override
-			public boolean onPreDraw() {
-				if (!INITBAR) {
-					Rect rect = new Rect();
-					activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
-					setStatusHeight(rect.top);
-					rateViews(activity);
-					rateViews2(activity);
-				}
-				v.getViewTreeObserver().removeOnPreDrawListener(this);
-				return false;
-			}
-		});
+					@Override
+					public boolean onPreDraw() {
+						if (!INITBAR) {
+							Rect rect = new Rect();
+							activity.getWindow().getDecorView()
+									.getWindowVisibleDisplayFrame(rect);
+							setStatusHeight(rect.top);
+							rateViews(activity);
+							rateViews2(activity);
+						}
+						v.getViewTreeObserver().removeOnPreDrawListener(this);
+						return false;
+					}
+				});
 	}
 }
